@@ -12,10 +12,10 @@ def predict_species(sep_len,sep_width,pet_len,pet_width,scaler_path,model_path):
             model = pickle.load(file2)
 
         dct = {
-            'sepallength':[sep_len],
-            'sepalwidth':[sep_width],
-            'petallength':[pet_len],
-            'petalwidth':[pet_width]
+            'SepalLengthCm':[sep_len],
+            'SepalWidthCm':[sep_width],
+            'PetalLengthCm':[pet_len],
+            'PetalWidthCm':[pet_width]
         }
 
         x_new = pd.DataFrame(dct)
@@ -31,10 +31,23 @@ def predict_species(sep_len,sep_width,pet_len,pet_width,scaler_path,model_path):
     except Exception as e:
         st.error(f'Error during prediction : {str(e)}')
         return None,None
-    
 
 
-st.title('Iris Species Predictor')
+st.title('Iris Species Predictor ')
 
-sep_len=st.number_input('Sepallength',min_value=0.0)
+sep_len= st.number_input('Sepallength',min_value=0.0 ,step=0.1,value=5.1)
+sep_width= st.number_input('Sepalwidth',min_value=0.0 ,step=0.1,value=3.5)
+pet_len= st.number_input('petallength',min_value=0.0 ,step=0.1,value=1.4)
+pet_width=st.number_input('petalwidth',min_value=0.0 ,step=0.1,value=3.5)
 
+if st.button('Predict'):
+    scaler_path = 'notebook/scaler.pkl'
+    model_path = 'notebook/model.pkl'
+
+    pred , max_prob =predict_species(sep_len,sep_width,pet_len,pet_width,scaler_path,model_path)
+
+    if pred is not None and max_prob is not None:
+        st.subheader(f'predicted species : {pred[0]}')
+        st.subheader(f'prediction probability : {max_prob:4f}')
+    else:
+        st.error('prediction failed. check input values are model files.')
